@@ -1,6 +1,6 @@
 {
     "name": "@tvaliasek/vue-datatable",
-    "version": "2.4.2",
+    "version": "2.4.3",
     "private": false,
     "files": [
         "src",
@@ -57,38 +57,38 @@
     "dependencies": {
         "flat": "^6.0.1",
         "@vueuse/core": "^14.2.1",
-        "vue": "^3.5.29"
+        "vue": "^3.5.31"
     },
     "peerDependencies": {
         "bootstrap": "^5.3.8",
-        "vue-router": "^5.0.3"
+        "vue-router": "^5.0.4"
     },
     "devDependencies": {
-        "@stylistic/eslint-plugin": "^5.9.0",
+        "@stylistic/eslint-plugin": "^5.10.0",
         "@tsconfig/node24": "^24.0.4",
-        "@types/node": "^24.11.0",
-        "@vitejs/plugin-vue": "^6.0.4",
+        "@types/node": "^24.12.0",
+        "@vitejs/plugin-vue": "^6.0.5",
         "@vue/eslint-config-typescript": "^14.7.0",
-        "@vue/tsconfig": "^0.9.0",
+        "@vue/tsconfig": "^0.9.1",
         "bootstrap": "^5.3.8",
-        "eslint": "^10.0.2",
-        "eslint-plugin-oxlint": "^1.51.0",
+        "eslint": "^10.1.0",
+        "eslint-plugin-oxlint": "^1.57.0",
         "eslint-plugin-vue": "^10.8.0",
         "jiti": "^2.6.1",
         "npm-run-all2": "^8.0.4",
-        "oxlint": "^1.51.0",
-        "sass": "^1.97.3",
-        "sass-embedded": "1.97.3",
+        "oxlint": "^1.57.0",
+        "sass": "^1.98.0",
+        "sass-embedded": "1.98.0",
         "typescript": "~5.9.3",
         "vite": "^7.3.1",
         "vite-plugin-dts": "^4.5.4",
-        "vite-plugin-vue-devtools": "^8.0.7",
-        "vitest": "^4.0.18",
-        "vue-tsc": "^3.2.5",
+        "vite-plugin-vue-devtools": "^8.1.1",
+        "vitest": "^4.1.2",
+        "vue-tsc": "^3.2.6",
         "@types/flat": "^5.0.5",
-        "@typescript-eslint/parser": "^8.56.1",
+        "@typescript-eslint/parser": "^8.57.2",
         "axios": "^1.13.6",
         "@vuelidate/core": "^2.0.3",
-        "vue-router": "^5.0.3"
+        "vue-router": "^5.0.4"
     }
 }
