@@ -65,7 +65,7 @@ const props = withDefaults(defineProps<{
     header: ColumnDefinition<TRowData>[]
     actionsOnLeft?: boolean
     actions: boolean
-    sort?: DotPaths<TRowData> | null
+    sort?: string | null
     sortDirection?: SortDirection
     filter?: Record<string, string>
     i18n: Record<string, string>

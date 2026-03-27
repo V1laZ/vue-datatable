@@ -22,7 +22,7 @@ const props = withDefaults(defineProps<{
     i18n: Record<string, string>
     text: string
     dataField: DotPaths<TRowData>
-    sort?: DotPaths<TRowData> | null
+    sort?: string | null
     sortable?: boolean
     sortDirection?: string | null
 }>(), {
