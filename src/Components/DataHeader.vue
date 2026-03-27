@@ -1,10 +1,17 @@
 <template>
     <thead class="__datatable-header">
         <tr>
-            <th v-if="selectableRows && selectableRowsCheckboxes" class="vue-datatable-vertical-align-middle">
+            <th
+                v-if="selectableRows && selectableRowsCheckboxes"
+                class="vue-datatable-vertical-align-middle"
+            >
                 <div class="custom-control custom-checkbox">
                     <label class="d-flex align-items-center align-content-center gap-1">
-                        <input type="checkbox" class="custom-control-input" v-model="selectAllState"/>
+                        <input
+                            v-model="selectAllState"
+                            type="checkbox"
+                            class="custom-control-input"
+                        />
                         <span>{{ selectedCount }}</span>
                     </label>
                 </div>
@@ -20,9 +27,8 @@
                 :filterable="cell.filterable"
                 :filter="filter"
                 :sortable="cell.sortable"
-                @filter="onFilter"
-                @sort="onSort"
                 :i18n="i18n"
+                @sort="onSort"
             />
             <th v-if="actions && !actionsOnLeft"></th>
         </tr>
@@ -37,8 +43,8 @@
                     v-if="cell.filterable"
                     :data-field="cell.data"
                     :filter="filter"
-                    @filter="onFilter"
                     :i18n="i18n"
+                    @filter="onFilter"
                 />
             </th>
             <th v-if="actions && !actionsOnLeft"></th>
@@ -46,20 +52,20 @@
     </thead>
 </template>
 
-<script setup lang="ts">
-import type { ColumnDefinition } from '@/interfaces'
+<script setup lang="ts" generic="TRowData extends Record<string, any> = Record<string, any>">
+import type { ColumnDefinition, DotPaths, SortDirection } from '@/interfaces'
 import DataHeaderCell from './DataHeaderCell.vue'
 import DataHeaderCellFilter from './DataHeaderCellFilter.vue'
 import { computed, ref, watch } from 'vue'
 
 const props = withDefaults(defineProps<{
-    selectableRows: boolean
-    selectableRowsCheckboxes: boolean
-    header: ColumnDefinition[]
-    actionsOnLeft: boolean
+    selectableRows?: boolean
+    selectableRowsCheckboxes?: boolean
+    header: ColumnDefinition<TRowData>[]
+    actionsOnLeft?: boolean
     actions: boolean
-    sort?: string | null
-    sortDirection?: string | null
+    sort?: DotPaths<TRowData> | null
+    sortDirection?: SortDirection
     filter?: Record<string, string>
     i18n: Record<string, string>
     selectedCount?: number
@@ -81,7 +87,11 @@ const selectAllState = computed({
     },
     set(value) {
         selectAll.value = value
-        $emit((selectAll.value) ? 'selectAll' : 'selectNone')
+        if (value) {
+            emit('selectAll')
+        } else {
+            emit('selectNone')
+        }
     }
 })
 
@@ -91,13 +101,18 @@ watch(computed(() => props.selectedCount), (value) => {
     }
 })
 
-const $emit = defineEmits(['filter', 'sort', 'selectAll', 'selectNone'])
+const emit = defineEmits<{
+    filter: [filter: Record<string, string>]
+    sort: [dataField: DotPaths<TRowData>]
+    selectAll: []
+    selectNone: []
+}>()
 
 function onFilter(data: Record<string, string>): void {
-    $emit('filter', data)
+    emit('filter', data)
 }
 
-function onSort(data: string): void {
-    $emit('sort', data)
+function onSort(data: DotPaths<TRowData>): void {
+    emit('sort', data)
 }
 </script>

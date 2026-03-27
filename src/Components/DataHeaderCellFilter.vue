@@ -1,50 +1,34 @@
 <template>
     <BFormInput
-        size="sm"
         v-model="localFilterValue"
+        size="sm"
         :placeholder="i18n.search"
+        @update:model-value="debouncedSetFilterValue"
     />
 </template>
 
-<script setup lang="ts">
-import { onBeforeUnmount, watch, computed, ref } from 'vue'
+<script setup lang="ts" generic="TRowData extends Record<string, any> = Record<string, any>">
+import { ref } from 'vue'
 import BFormInput from './ui/BFormInput.vue'
+import type { DotPaths } from '@/interfaces'
+import { useDebounceFn } from '@vueuse/core'
 
 const props = defineProps<{
     i18n: Record<string, string>
-    dataField: string
+    dataField: DotPaths<TRowData>
     filter: Record<string, string>
 }>()
 
-const $emit = defineEmits(['filter'])
+const emit = defineEmits<{
+    filter: [filter: Record<string, string>]
+}>()
 
-const tm = ref<any>(null)
 const localFilterValue = ref<string>(((props.filter.hasOwnProperty(props.dataField)) ? (props.filter[props.dataField] ?? '') : ''))
 
-const filterValue = computed({
-    get() {
-        if (props.filter.hasOwnProperty(props.dataField)) {
-            return props.filter[props.dataField] ?? ''
-        }
-        return ''
-    },
-    set(value: string) {
-        const filter = JSON.parse(JSON.stringify(props.filter))
-        filter[props.dataField] = `${value}`
-        $emit('filter', filter)
-    }
-})
+const debouncedSetFilterValue = useDebounceFn(() => {
+    const filter = JSON.parse(JSON.stringify(props.filter))
+    filter[props.dataField] = `${localFilterValue.value}`
+    emit('filter', filter)
+}, 500)
 
-watch(localFilterValue, (newValue) => {
-    const value = `${newValue}`
-    window.clearTimeout(tm.value)
-    tm.value = window.setTimeout(() => {
-        filterValue.value = value
-    }, 500)
-}
-)
-
-onBeforeUnmount(() => {
-    window.clearTimeout(tm.value)
-})
 </script>

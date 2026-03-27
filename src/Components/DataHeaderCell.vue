@@ -1,20 +1,28 @@
 <template>
     <th>
-        <a @click.prevent="onSort" href="javascript:void(0);" class="d-block mb-1">
-            <BsIcon v-show="sortable" :icon="sortIconName"/> {{ text }}
+        <a
+            href="javascript:void(0);"
+            class="d-block mb-1"
+            @click.prevent="onSort"
+        >
+            <BsIcon
+                v-show="sortable"
+                :icon="sortIconName"
+            /> {{ text }}
         </a>
     </th>
 </template>
 
-<script setup lang="ts">
+<script setup lang="ts" generic="TRowData extends Record<string, any> = Record<string, any>">
+import type { DotPaths } from '@/interfaces'
 import BsIcon from '../Icons/bsIcon.vue'
 import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{
     i18n: Record<string, string>
     text: string
-    dataField: string
-    sort?: string | null
+    dataField: DotPaths<TRowData>
+    sort?: DotPaths<TRowData> | null
     sortable?: boolean
     sortDirection?: string | null
 }>(), {
@@ -23,7 +31,9 @@ const props = withDefaults(defineProps<{
     sortDirection: null
 })
 
-const $emit = defineEmits(['sort'])
+const emit = defineEmits<{
+    sort: [dataField: DotPaths<TRowData>]
+}>()
 
 const sortIconName = computed(() => {
     if (props.sort === props.dataField) {
@@ -34,7 +44,7 @@ const sortIconName = computed(() => {
 
 function onSort(): void {
     if (props.sortable) {
-        $emit('sort', `${props.dataField}`)
+        emit('sort', `${props.dataField}`)
     }
 }
 </script>
