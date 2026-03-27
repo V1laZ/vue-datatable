@@ -18,8 +18,8 @@
                             'btn-disabled': disableButtons || runningActions.includes(String(button.event))
                         }
                     ]"
-                    @click.prevent="onButtonClick(button)"
                     :disabled="disableButtons"
+                    @click.prevent="onButtonClick(button)"
                 >
                     <template v-if="button.customTextComponent">
                         <component
@@ -27,7 +27,9 @@
                             v-bind="button.customTextComponentProps ?? {}"
                         />
                     </template>
-                    <template v-if="button.text">{{ button.text }}</template>
+                    <template v-if="button.text">
+                        {{ button.text }}
+                    </template>
                 </button>
                 <a
                     v-if="(!button?.customComponent && (button?.href || button?.hrefCallback))"
@@ -50,27 +52,32 @@
                     <template v-if="button.text">{{ button.text }}</template>
                 </a>
                 <component
-                    v-if="button?.customComponent"
                     :is="typeof button.customComponent === 'string' ? button.customComponent : button.customComponent()"
+                    v-if="button?.customComponent"
                     :row="row"
                     @action="onAction"
                 />
             </template>
         </div>
-        <div class="d-flex flex-wrap flex-direction-column justify-content-center align-items-center align-content-center gap-2" v-else>
-            <p class="mb-0 w-100 text-center">{{confirm.confirmText}}</p>
+        <div
+            v-else
+            class="d-flex flex-wrap flex-direction-column justify-content-center align-items-center align-content-center gap-2"
+        >
+            <p class="mb-0 w-100 text-center">
+                {{ confirm.confirmText }}
+            </p>
             <div class="d-flex justify-content-center align-content-center align-items-center flex-wrap gap-2">
                 <button
                     class="btn btn-sm btn-primary"
                     @click.prevent="onConfirm"
                 >
-                    {{i18n.buttonConfirmOk}}
+                    {{ i18n.buttonConfirmOk }}
                 </button>
                 <button
                     class="btn btn-sm btn-danger"
                     @click.prevent="onCancel"
                 >
-                    {{i18n.buttonConfirmCancel}}
+                    {{ i18n.buttonConfirmCancel }}
                 </button>
             </div>
         </div>

@@ -26,11 +26,11 @@ export interface ColumnDefinition<
     data: DotPaths<T>
     sortable?: boolean
     filterable?: boolean
-    format?: (value: any, row: Record<string, any>) => any
+    format?: (value: any, row: ProcessedRowData<T>) => any
     sortFn?: (a: any, b: any) => number
-    filterFn?: (cellValue: any, filterValue: string, rowData: ProcessedRowData) => boolean
+    filterFn?: (cellValue: any, filterValue: string, rowData: ProcessedRowData<T>) => boolean
     customComponent?: () => Component
-    cellStyle?: string | ((index: string, content: any, row: Record<string, any>) => string | Record<string, string>)
+    cellStyle?: string | ((index: string, content: any, row: ProcessedRowData<T>) => string | Record<string, string>)
     cellClassnames?: string[]
     aggregate?: (previousValue: any, currentValue: any, currentIndex: number, array: any[]) => unknown
     aggregateInitialValue?: any
