@@ -45,6 +45,7 @@
                     :filter="filter"
                     :i18n="i18n"
                     @filter="onFilter"
+                    @select.stop
                 />
             </th>
             <th v-if="actions && !actionsOnLeft"></th>
