@@ -62,11 +62,11 @@ src/
 ## Build & Development
 
 ```sh
-npm run dev          # Start Vite dev server (uses src/main.ts + src/App.vue as playground)
-npm run build        # Type-check + library build (outputs to dist/)
-npm run type-check   # vue-tsc type checking only
-npm run lint         # Run oxlint then ESLint (both with auto-fix)
-npm run test         # Run Vitest
+pnpm dev          # Start Vite dev server (uses src/main.ts + src/App.vue as playground)
+pnpm build        # Type-check + library build (outputs to dist/)
+pnpm type-check   # vue-tsc type checking only
+pnpm lint         # Run oxlint then ESLint (both with auto-fix)
+pnpm test         # Run Vitest
 ```
 
 The library entry point is `src/index.ts`. The build produces:

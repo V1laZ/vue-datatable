@@ -4,10 +4,10 @@ Very naive and simple data table for Bootstrap 5 and Vue 3. For Vue 2 use versio
 
 ## Install
 ``` sh
-npm install @tvaliasek/vue-datatable
+pnpm add @tvaliasek/vue-datatable
 
 # peer dependencies
-npm install bootstrap
+pnpm add bootstrap
 ```
 
 ``` js
@@ -133,6 +133,6 @@ Actions are defined as Array of objects, each action generates button and emits 
 # clone repo using your favourite git client
 gh repo clone tvaliasek/vue-datatable ./vue-datatable
 cd vue-datatable
-npm install
-npm run dev
+pnpm install
+pnpm dev
 ```

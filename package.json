@@ -1,7 +1,11 @@
 {
     "name": "@tvaliasek/vue-datatable",
-    "version": "2.4.3",
+    "version": "2.4.4",
     "private": false,
+    "packageManager": "pnpm@10.8.0",
+    "engines": {
+        "node": "^20.19.0 || >=22.12.0"
+    },
     "files": [
         "src",
         "dist",
@@ -80,7 +84,7 @@
         "sass": "^1.98.0",
         "sass-embedded": "1.98.0",
         "typescript": "~5.9.3",
-        "vite": "^7.3.1",
+        "vite": "^8.0.3",
         "vite-plugin-dts": "^4.5.4",
         "vite-plugin-vue-devtools": "^8.1.1",
         "vitest": "^4.1.2",
