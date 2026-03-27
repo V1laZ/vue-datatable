@@ -216,7 +216,7 @@ const props = withDefaults(
         tableClass?: string | null
         size?: 'sm'
         autoUpdateLimit?: number
-        rowClass: string | ((row: TRowData) => null | string)
+        rowClass?: string | ((row: TRowData) => null | string)
         paginationFirstNumber?: boolean
         paginationLastNumber?: boolean
         pageOptionsVariant?: ButtonVariant
@@ -260,7 +260,8 @@ const props = withDefaults(
         autoUpdateButtonRunningVariant: undefined,
         exportButtonVariant: 'primary',
         initialDisplayConfig: undefined,
-        size: undefined
+        size: undefined,
+        rowClass: () => null
     }
 )
 
