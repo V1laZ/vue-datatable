@@ -8,11 +8,11 @@
                 <slot name="right"></slot>
                 <AutoUpdateCounter
                     v-if="autoUpdate"
-                    @refresh="onRefresh"
                     :i18n="i18nStrings"
                     :button-variant="autoUpdateButtonVariant"
                     :button-running-variant="autoUpdateButtonRunningVariant"
                     :auto-update-limit="autoUpdateLimit"
+                    @refresh="onRefresh"
                 />
             </div>
         </div>
@@ -38,8 +38,14 @@
                 <tbody v-if="loading || data.length === 0">
                     <slot name="firstRow"></slot>
                     <tr>
-                        <td class="text-center" :colspan="(header.length + ((actions) ? 1 : 0)) + ((selectableRows && selectableRowsCheckboxes) ? 1 : 0)">
-                            <p class="mb-0" v-if="!loading">
+                        <td
+                            class="text-center"
+                            :colspan="(header.length + ((actions) ? 1 : 0)) + ((selectableRows && selectableRowsCheckboxes) ? 1 : 0)"
+                        >
+                            <p
+                                v-if="!loading"
+                                class="mb-0"
+                            >
                                 {{ i18nStrings.noData }}
                             </p>
                             <LoadingIndicator
@@ -60,7 +66,6 @@
                         :filter="filter"
                         :actions="actions"
                         :buttons="buttons"
-                        @action="onAction"
                         :i18n="i18nStrings"
                         :disable-buttons="disableButtons"
                         :running-actions="runningActions"
@@ -69,17 +74,21 @@
                         :selectable-rows-checkboxes="selectableRowsCheckboxes"
                         :selectable-rows-track-by="selectableRowsTrackBy"
                         :selectable-rows-class="selectableRowsClass"
-                        @rowSelectToggle="onRowSelectToggle"
                         :row-index="index"
                         :table-unique-key="uniqueKey"
                         :row-class="rowClass"
+                        @action="onAction"
+                        @row-select-toggle="onRowSelectToggle"
                     />
                     <tr v-if="Object.keys(aggregateFunctions).length > 0">
                         <td v-if="selectableRows && selectableRowsCheckboxes">
                         </td>
-                        <th v-for="(cell, index) of header" :key="`aggregator-${cell.data}-${index}`" >
+                        <th
+                            v-for="(cell, index) of header"
+                            :key="`aggregator-${cell.data}-${index}`"
+                        >
                             <span v-if="aggregateTexts[cell.data]">
-                                {{aggregateTexts[cell.data]}}<br/>
+                                {{ aggregateTexts[cell.data] }}<br />
                             </span>
                             <span v-if="typeof aggregateFunctions[cell.data] === 'function'">
                                 {{ getAggregateValue(cell.data) }}
@@ -100,8 +109,8 @@
                 <div>
                     <BPagination
                         v-if="paging"
-                        size="sm"
                         v-model="currentPage"
+                        size="sm"
                         :total="(props.remoteDataMode) ? props.remoteDataTotalRows : filteredData.length"
                         :per-page="currentPageLimit"
                         :first-number="paginationFirstNumber"
@@ -127,9 +136,9 @@
                         <BDropdownItem
                             v-for="item in pagingOptions"
                             :key="`item-${item}`"
-                            @click="onSetCurrentPageLimit(item)"
                             tag="button"
                             :text="`${item}`"
+                            @click="onSetCurrentPageLimit(item)"
                         />
                     </BDropdown>
                 </slot>
@@ -144,7 +153,7 @@
                         :class="`btn-${exportButtonVariant}`"
                         @click.prevent="onExport"
                     >
-                        {{i18nStrings.exportButtonText}}
+                        {{ i18nStrings.exportButtonText }}
                     </button>
                 </slot>
             </div>
@@ -163,7 +172,7 @@ import naturalSort from './Sorters/naturalSort'
 import { flatten, unflatten, type FlattenOptions } from 'flat'
 import { generateString } from './randomString'
 import { onBeforeMount, ref, computed, watch, toValue, nextTick } from 'vue'
-import type { ProcessedRowData, ColumnDefinition, ActionButtonDefinition, ProcessedCell, ButtonVariant } from './interfaces'
+import type { ProcessedRowData, ColumnDefinition, ActionButtonDefinition, ProcessedCell, ButtonVariant, DisplayConfig, DotPaths, SortDirection } from './interfaces'
 import BDropdown from './Components/ui/BDropdown.vue'
 import BDropdownItem from './Components/ui/BDropdownItem.vue'
 import BPagination from './Components/ui/BPagination.vue'
@@ -186,7 +195,7 @@ const props = withDefaults(
         i18n?: Record<string, string>
         autoUpdate?: boolean
         loading?: boolean
-        header?: ColumnDefinition[]
+        header?: ColumnDefinition<TRowData>[]
         data?: Array<TRowData>
         actions?: boolean
         buttons?: ActionButtonDefinition<TRowData>[]
@@ -205,15 +214,16 @@ const props = withDefaults(
         stateSavingUniqueKey?: string
         tableUniqueKey?: string | null
         tableClass?: string | null
-        size?: string
+        size?: 'sm'
         autoUpdateLimit?: number
-        rowClass?: string | ((row: TRowData) => null | string)
+        rowClass: string | ((row: TRowData) => null | string)
         paginationFirstNumber?: boolean
         paginationLastNumber?: boolean
         pageOptionsVariant?: ButtonVariant
         autoUpdateButtonVariant?: ButtonVariant
         autoUpdateButtonRunningVariant?: ButtonVariant
         exportButtonVariant?: ButtonVariant
+        initialDisplayConfig?: Partial<DisplayConfig<TRowData>>
     }>(),
     {
         remoteDataMode: false,
@@ -248,15 +258,17 @@ const props = withDefaults(
         pageOptionsVariant: undefined,
         autoUpdateButtonVariant: undefined,
         autoUpdateButtonRunningVariant: undefined,
-        exportButtonVariant: 'primary'
+        exportButtonVariant: 'primary',
+        initialDisplayConfig: undefined,
+        size: undefined
     }
 )
 
-const filter = ref<Record<string, string>>({})
-const sortBy = ref<string | null>(null)
-const sortDirection = ref<string | null>(null)
-const currentPage = ref<number>(1)
-const initialPageLimit: number = (props.pagingOptions[0] ?? 15)
+const filter = ref<Record<string, string>>((props.initialDisplayConfig?.filter ?? {}) as Record<string, string>)
+const sortBy = ref<DotPaths<TRowData> | null>(props.initialDisplayConfig?.sortBy ?? null)
+const sortDirection = ref<SortDirection | null>(props.initialDisplayConfig?.sortDirection ?? null)
+const currentPage = ref<number>(props.initialDisplayConfig?.currentPage ?? 1)
+const initialPageLimit: number = (props.initialDisplayConfig?.currentPageLimit ?? props.pagingOptions[0] ?? 15)
 const currentPageLimit = ref<number>(initialPageLimit)
 const uniqueKey = ref<string>(props.tableUniqueKey ?? `vueDataTable_${generateString(20)}`)
 

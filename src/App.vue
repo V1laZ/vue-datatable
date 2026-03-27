@@ -1,15 +1,17 @@
 <template>
     <div class="container py-5">
         <h1>DataTable usage example</h1>
-        <hr/>
+        <hr />
 
         <div
             v-if="detail !== null"
             class="card mb-5"
         >
             <div class="card-body">
-                <h4 class="card-title">Detail of {{detail.person.name}}</h4>
-                <pre class="p-4 bg-light font-weight-bold">{{JSON.stringify(detail, null, 4)}}</pre>
+                <h4 class="card-title">
+                    Detail of {{ detail.person.name }}
+                </h4>
+                <pre class="p-4 bg-light font-weight-bold">{{ JSON.stringify(detail, null, 4) }}</pre>
             </div>
             <div class="card-footer">
                 <button
@@ -20,8 +22,9 @@
                 </button>
             </div>
         </div>
-        <p>Selected rows: {{selected.length}}</p>
+        <p>Selected rows: {{ selected.length }}</p>
         <DataTable
+            v-model="selected"
             :auto-update="true"
             :auto-update-limit="5"
             :header="header"
@@ -35,11 +38,11 @@
             :selectable-rows-checkboxes="true"
             :selectable-rows-track-by="'person.pvsid'"
             :selectable-rows-class="'bg-primary text-white font-weight-bold'"
-            v-model="selected"
             :exportable="true"
             :state-saving="true"
             :state-saving-unique-key="'table'"
             :row-class="(row) => (row.party === 'Democrat') ? 'border-primary' : null"
+            :initial-display-config="initialDisplayConfig"
             @detail="onDetail"
             @export="onExport"
             @refresh="onRefresh"
@@ -53,18 +56,31 @@ import CustomButton from './CustomButton.vue'
 import CustomCell from './CustomCell.vue'
 import { computed, nextTick, onMounted, ref } from 'vue'
 import DataTable from './DataTable.vue'
-import { type ActionButtonDefinition } from './interfaces'
+import { type ActionButtonDefinition, type ColumnDefinition, type DisplayConfig } from './interfaces'
 const DATASET_URL = 'https://www.govtrack.us/api/v2/role?current=true&role_type=senator'
 
-type RecordType = Record<string, any>
+type Senator = {
+    person: {
+        name: string
+    }
+    party: string
+    startdate: string
+    enddate: string
+    congress_numbers: number[] | string
+}
+
+const initialDisplayConfig: Partial<DisplayConfig<Senator>> = {
+    sortBy: 'person.name',
+    sortDirection: 'DESC'
+}
 
 const loading = ref(true)
-const dataset = ref<RecordType[]>([])
-const detail = ref<Record<string, any> | null>(null)
-const selected = ref<RecordType[]>([])
-const dataset2 = ref<RecordType[]>([])
+const dataset = ref<Senator[]>([])
+const detail = ref<Senator | null>(null)
+const selected = ref<Senator[]>([])
+const dataset2 = ref<Senator[]>([])
 
-const header = computed(() => {
+const header = computed<ColumnDefinition<Senator>[]>(() => {
     return [
         {
             text: 'Name',
@@ -109,10 +125,10 @@ const header = computed(() => {
                 return (Array.isArray(value) ? value.join(', ') : `${value}`)
             },
             aggregateText: 'Total: ',
-            aggregate(accumulator: number, currentValue: RecordType, index: number, array: RecordType[]) {
+            aggregate(accumulator: number, currentValue: Senator, index: number, array: Senator[]) {
                 void index
                 void array
-                // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
+
                 return accumulator + (Array.isArray(currentValue.congress_numbers) ? currentValue.congress_numbers.length : 0)
             },
             aggregateInitialValue: 0
@@ -120,7 +136,7 @@ const header = computed(() => {
     ]
 })
 
-const buttons = computed<ActionButtonDefinition[]>(() => {
+const buttons = computed<ActionButtonDefinition<Senator>[]>(() => {
     return [
         {
             event: 'detail',
@@ -148,7 +164,7 @@ const buttons = computed<ActionButtonDefinition[]>(() => {
         },
         {
             text: 'linkCallback',
-            hrefCallback(row: { row: RecordType }) {
+            hrefCallback(row: { row: Senator }) {
                 void row
                 return '/test/foo'
             },
@@ -180,11 +196,11 @@ function loadDataset(): void {
         })
 }
 
-function onDetail(rowData: RecordType): void {
+function onDetail(rowData: Senator): void {
     detail.value = rowData
 }
 
-function onExport(data: RecordType[]): void {
+function onExport(data: Senator[]): void {
     console.log(data)
 }
 </script>

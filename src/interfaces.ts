@@ -1,11 +1,29 @@
 import type { Component } from 'vue'
 
+type IsGenericRecord<T> = string extends keyof T ? true : false
+
+/**
+ * Produces a union of all dot-notation key paths for a given type T.
+ * Falls back to `string` when T is a generic Record<string, any>.
+ */
+export type DotPaths<T extends Record<string, any>>
+    = IsGenericRecord<T> extends true
+        ? string
+        : {
+                [K in keyof T & string]: T[K] extends Array<any>
+                    ? K
+                    : T[K] extends Record<string, any>
+                        ? K | `${K}.${DotPaths<T[K]>}`
+                        : K
+            }[keyof T & string]
+
+export type SortDirection = 'ASC' | 'DESC' | null
+
 export interface ColumnDefinition<
-    T extends Record<string, any> = Record<string, any>,
-    TDataKey extends keyof T = keyof T
+    T extends Record<string, any> = Record<string, any>
 > {
     text: string
-    data: TDataKey
+    data: DotPaths<T>
     sortable?: boolean
     filterable?: boolean
     format?: (value: any, row: Record<string, any>) => any
@@ -20,12 +38,14 @@ export interface ColumnDefinition<
     clickToSelect?: boolean
 }
 
-export interface DisplayConfig {
+export interface DisplayConfig<
+    T extends Record<string, any> = Record<string, any>
+> {
     currentPage: number
     currentPageLimit: number
-    filter: Record<string, any>
-    sortBy: string | null
-    sortDirection: null | 'ASC' | 'DESC'
+    filter: Partial<Record<DotPaths<T>, string>>
+    sortBy: DotPaths<T> | null
+    sortDirection: SortDirection
 }
 
 /**

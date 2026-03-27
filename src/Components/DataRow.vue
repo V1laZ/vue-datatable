@@ -1,8 +1,16 @@
 <template>
     <tr :class="rowClassnames">
-        <td v-if="selectableRows && selectableRowsCheckboxes" class="vue-datatable-vertical-align-middle">
+        <td
+            v-if="selectableRows && selectableRowsCheckboxes"
+            class="vue-datatable-vertical-align-middle"
+        >
             <div class="custom-control custom-checkbox">
-                <input type="checkbox" class="custom-control-input" :id="`${tableUniqueKey}_rowCheckbox-${rowIndex}`" v-model="selectedModel"/>
+                <input
+                    :id="`${tableUniqueKey}_rowCheckbox-${rowIndex}`"
+                    v-model="selectedModel"
+                    type="checkbox"
+                    class="custom-control-input"
+                />
             </div>
         </td>
         <DataRowButtons
@@ -20,8 +28,8 @@
             :key="`rw-${index}`"
         >
             <component
-                v-if="item.customComponent"
                 :is="item.customComponent"
+                v-if="item.customComponent"
                 :row="row.row"
                 :data-index="item.index"
                 @action="onAction"
@@ -57,13 +65,13 @@ import { computed } from 'vue'
 
 const props = withDefaults(defineProps<{
     actionsOnLeft?: boolean
-    header: ColumnDefinition[]
+    header: ColumnDefinition<TRowData>[]
     row: ProcessedRowData<TRowData>
     actions?: boolean
     buttons?: ActionButtonDefinition<TRowData>[]
     i18n: Record<string, string>
     disableButtons?: boolean
-    filter?: Record<string, string>
+    filter: Record<string, string>
     runningActions?: string[]
     selectableRows?: boolean
     selectableRowsCheckboxes?: boolean
@@ -71,7 +79,7 @@ const props = withDefaults(defineProps<{
     selectableRowsClass?: string
     rowIndex: number
     tableUniqueKey: string
-    rowClass?: string | ((row: TRowData) => null | string)
+    rowClass: string | ((row: TRowData) => null | string)
 }>(), {
     actionsOnLeft: false,
     actions: true,
@@ -119,7 +127,7 @@ const rowClassnames = computed(() => {
     return classnames
 })
 
-function onAction(data: { event: string, row: Record<string, any> }): void {
+function onAction(data: { event: string, row: TRowData }): void {
     $emit('action', data)
 }
 
