@@ -641,7 +641,6 @@ function onFilter(value: Record<string, any>): void {
         }
     }
     filter.value = { ...cleanedFilter }
-    console.log('new fiter value', filter.value)
 }
 
 function onAction(value: { event: string, row: Record<string, any> }): void {
